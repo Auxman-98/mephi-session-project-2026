@@ -1,0 +1,54 @@
+    1  nmcli connection show
+    2  nmcli connection modify enp0s3 ipv4.address 192.168.1.100/24
+    3  nmcli connection modify enp0s3 ipv4.method manual
+    4  nmcli connection modify enp0s3 ipv4.gateway 192.168.1.1
+    5  nmcli connection modify enp0s3 ipv4.dns 8.8.8.8
+    6  hostnamectl hostname mephi-2026.domain.local
+    7  exit
+    8  sudo ping -c 4 192.168.1.1 > /tmp/network_check.txt
+    9  sudo ping -c 4 8.8.8.8 >> /tmp/network_check.txt
+   10  sudo cp network_check.txt ~/network_check.txt
+   11  sudo dnf install nginx tcpdump libcap-ng-utils
+   12  sudo dnf download --destdir=/tmp tcpdump
+   13  rpm -ivh tcpdump-4.99.6-2.x86_64.rpm
+   14  sudo cp /tmp/tcpdump-4.99.6-2.x86_64.rpm ~/tcpdump.rpm
+   15  systemctl poweroff
+   16  sudo fdisk -l /dev/sdb
+   17  sudo fdisk /dev/sdb
+   18  sudo mkfs -t ext4 -L MEPHI_DATA /dev/sdb1
+   19  sudo fdisk -l /dev/sdb
+   20  sudo mkdir -p /data/mephi-web
+   21  sudo nano /etc/fstab
+   22  sudo systemctl daemon-reload
+   23  sudo mount --label=MEPHI_DATA /data/mephi-web
+   24  sudo cp /etc/fstab ~/fstab.txt
+   25  systemctl start nginx.service
+   26  systemctl enable --system nginx.service
+   27  journalctl -u nginx --since "5 minutes ago" > /tmp/nginx_recent_logs.txt
+   28  sudo useradd mephi-admin
+   29  sudo groupadd mephi-devs
+   30  sudo usermod -aG mephi-devs mephi-admin
+   31  sudo chown mephi-admin:mephi-devs /data/mephi-web
+   32  sudo chmod 2775 /data/mephi-web
+   33  sudo passwd mephi-admin
+   34  getenforce
+   35  sudo chcon -t httpd_sys_content_t /data/mephi-web
+   36  restorecon -v -n /data/mephi-web
+   37  sudo ls -l /usr/sbin/tcpdump
+   38  sudo setcap "cap_net_raw=ep" /usr/sbin/tcpdump
+   39  sudo setcap "cap_net_admin=ep" /usr/sbin/tcpdump
+   40  getcap /usr/sbin/tcpdump
+   41  sudo -u mephi-admin tcpdump --help
+   42  sudo nano /etc/pam.d/login
+   43  sudo nano /etc/pam.d/sshd
+   44  sudo nano /etc/ssh/denied_users
+   45  sudo chmod 600 /etc/ssh/denied_users
+   46  sudo systemctl daemon-reload
+   47  exit
+   48  sudo nano /data/mephi-web/index.html
+   49  sudo nano /etc/nginx/nginx.conf
+   50  sudo nginx -s reload
+   51  curl http://localhost
+   52  curl http://192.168.1.100
+   53  curl -s http://192.168.1.100 > ~/curl_output.txt
+   54  history > ~/project_history.txt
